@@ -1,0 +1,8 @@
+[package]
+name = "spacebevy-client"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+bevy = { version = "0.17" }
+spacetimedb-sdk = { workspace = true }

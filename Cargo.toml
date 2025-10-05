@@ -1,0 +1,9 @@
+[workspace]
+members = [
+    "client",
+    "server",
+    "shared"
+]
+
+[dependencies]
+spacetimedb-sdk = { version = "1.5.0" }
