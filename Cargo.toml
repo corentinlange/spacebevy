@@ -4,6 +4,7 @@ members = [
     "server",
     "shared"
 ]
+resolver = "3"
 
 [workspace.dependencies]
 spacetimedb-sdk = { version = "1.5.0" }
