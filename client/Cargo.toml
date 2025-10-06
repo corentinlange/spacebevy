@@ -1,8 +1,22 @@
 [package]
 name = "spacebevy-client"
 version = "0.1.0"
-edition = "2024"
+edition = "2021"
+
+[features]
+default = ["desktop"]      # Build par défaut (Windows/Linux)
+desktop = []
+web = []
 
 [dependencies]
-bevy = { version = "0.17" }
-spacetimedb-sdk = { workspace = true }
+# --- dépendances communes ---
+bevy = { version = "0.17", default-features = true }
+sysinfo = "0.37.2"
+
+[target.'cfg(target_arch = "wasm32")'.dependencies]
+bevy = { version = "0.17", default-features = false, features = ["webgl2"] }
+wasm-bindgen = "0.2"
+console_error_panic_hook = "0.1"
+getrandom = { version = "0.3", default-features = false, features = [
+    "wasm_js",
+] }

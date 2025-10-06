@@ -1,0 +1,7 @@
+[build]
+target = "wasm32-unknown-unknown"
+release = true
+
+[[copy]]
+source = "assets"
+dest = "assets"
