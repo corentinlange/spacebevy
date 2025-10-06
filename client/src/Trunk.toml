@@ -5,3 +5,7 @@ release = true
 [[copy]]
 source = "assets"
 dest = "assets"
+
+[[copy]]
+source = "js"
+dest = "js"

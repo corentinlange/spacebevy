@@ -11,7 +11,13 @@ web = []
 [dependencies]
 # --- dépendances communes ---
 bevy = { version = "0.17", default-features = true }
+avian3d = { git = "https://github.com/Jondolf/avian", branch = "main" }
 sysinfo = "0.37.2"
+tokio = "1.47.1"
+hex = "0.4"
+
+[target.'cfg(not(target_arch = "wasm32"))'.dependencies]
+spacetimedb-sdk = { version = "1.5.0" }
 
 [target.'cfg(target_arch = "wasm32")'.dependencies]
 bevy = { version = "0.17", default-features = false, features = ["webgl2"] }

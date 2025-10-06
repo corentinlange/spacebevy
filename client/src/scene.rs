@@ -21,16 +21,6 @@ fn setup_scene(
         PlayerCamera,
     ));
 
-    // Cube
-    commands.spawn((
-        Mesh3d(meshes.add(Cuboid::new(1.0, 1.0, 1.0))),
-        MeshMaterial3d(materials.add(StandardMaterial {
-            base_color: Color::srgb(0.3, 0.7, 1.0),
-            ..default()
-        })),
-        Transform::from_xyz(0.0, 0.5, 0.0),
-    ));
-
     // Lumière
     commands.spawn((
         PointLight {

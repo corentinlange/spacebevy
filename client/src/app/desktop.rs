@@ -1,10 +1,11 @@
-use super::common::base_app;
-use crate::ui::perf::PerfPlugin;
 use bevy::prelude::*;
+
+use crate::net::NetworkPlugin;
+use super::common::base_app;
 
 pub fn run() {
     let mut app = base_app();
     app.add_plugins(DefaultPlugins)
-        .add_plugins(PerfPlugin)
+        .add_plugins(NetworkPlugin)
         .run();
 }
