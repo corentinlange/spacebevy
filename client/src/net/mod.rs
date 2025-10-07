@@ -64,6 +64,7 @@ fn creds_store() -> credentials::File {
 
 /// Our `on_connect` callback: save our credentials to a file.
 fn on_connected(_ctx: &DbConnection, _identity: Identity, token: &str) {
+    eprintln!("Connected to {}", token);
     if let Err(e) = creds_store().save(token) {
         eprintln!("Failed to save credentials: {:?}", e);
     }
@@ -106,7 +107,7 @@ fn subscribe_to_tables(ctx: &DbConnection) {
     ctx.subscription_builder()
         .on_applied(on_sub_applied)
         .on_error(on_sub_error)
-        .subscribe(["SELECT * FROM user", "SELECT * FROM message"]);
+        .subscribe(["SELECT * FROM users", "SELECT * FROM messages"]);
 }
 
 /// Read each line of standard input, and either set our name or send a message as appropriate.

@@ -1,0 +1,1 @@
+/!\ Important faire attention aux creds quand la db est relancée et spuprimer `~/.spacetimedb_client_credentials`
