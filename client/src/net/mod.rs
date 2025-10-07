@@ -89,13 +89,13 @@ fn on_disconnected(_ctx: &ErrorContext, err: Option<Error>) {
 /// Register all the callbacks our app will use to respond to database events.
 fn register_callbacks(ctx: &DbConnection) {
     // When a new user joins, print a notification.
-    ctx.db.user().on_insert(on_user_inserted);
+    ctx.db.users().on_insert(on_user_inserted);
 
     // When a user's status changes, print a notification.
-    ctx.db.user().on_update(on_user_updated);
+    ctx.db.users().on_update(on_user_updated);
 
     // When a new message is received, print it.
-    ctx.db.message().on_insert(on_message_inserted);
+    ctx.db.messages().on_insert(on_message_inserted);
 
     // When we fail to send a message, print a warning.
     // ctx.reducers.on_send_message(on_message_sent);
@@ -126,7 +126,7 @@ fn user_input_loop(ctx: &DbConnection) {
 /// Our `on_subscription_applied` callback:
 /// sort all past messages and print them in timestamp order.
 fn on_sub_applied(ctx: &SubscriptionEventContext) {
-    let mut messages = ctx.db.message().iter().collect::<Vec<_>>();
+    let mut messages = ctx.db.messages().iter().collect::<Vec<_>>();
     messages.sort_by_key(|m| m.sent);
     for message in messages {
         print_message(ctx, &message);
@@ -186,7 +186,7 @@ fn on_message_inserted(ctx: &EventContext, message: &Message) {
 fn print_message(ctx: &impl RemoteDbContext, message: &Message) {
     let sender = ctx
         .db()
-        .user()
+        .users()
         .identity()
         .find(&message.sender.clone())
         .map(|u| user_name_or_identity(&u))
