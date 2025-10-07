@@ -1,6 +1,6 @@
 use spacetimedb::{reducer, table, Identity, ReducerContext, Table, Timestamp};
 
-#[table(name = user, public)]
+#[table(name = users, public)]
 pub struct User {
     #[primary_key]
     identity: Identity,
@@ -8,7 +8,7 @@ pub struct User {
     online: bool,
 }
 
-#[table(name = message, public)]
+#[table(name = messages, public)]
 pub struct Message {
     sender: Identity,
     sent: Timestamp,
@@ -23,17 +23,17 @@ pub fn init(_ctx: &ReducerContext) {
 #[reducer(client_connected)]
 // Called when a client connects to a SpacetimeDB database server
 pub fn client_connected(ctx: &ReducerContext) {
-    if let Some(user) = ctx.db.user().identity().find(ctx.sender) {
+    if let Some(user) = ctx.db.users().identity().find(ctx.sender) {
         // If this is a returning user, i.e. we already have a `User` with this `Identity`,
         // set `online: true`, but leave `name` and `identity` unchanged.
-        ctx.db.user().identity().update(User {
+        ctx.db.users().identity().update(User {
             online: true,
             ..user
         });
     } else {
         // If this is a new user, create a `User` row for the `Identity`,
         // which is online, but hasn't set a name.
-        ctx.db.user().insert(User {
+        ctx.db.users().insert(User {
             name: None,
             identity: ctx.sender,
             online: true,
@@ -44,8 +44,8 @@ pub fn client_connected(ctx: &ReducerContext) {
 #[reducer(client_disconnected)]
 // Called when a client disconnects from SpacetimeDB database server
 pub fn identity_disconnected(ctx: &ReducerContext) {
-    if let Some(user) = ctx.db.user().identity().find(ctx.sender) {
-        ctx.db.user().identity().update(User {
+    if let Some(user) = ctx.db.users().identity().find(ctx.sender) {
+        ctx.db.users().identity().update(User {
             online: false,
             ..user
         });
@@ -64,7 +64,7 @@ pub fn identity_disconnected(ctx: &ReducerContext) {
 pub fn send_message(ctx: &ReducerContext, text: String) -> Result<(), String> {
     let text = validate_message(text)?;
     log::info!("{}", text);
-    ctx.db.message().insert(Message {
+    ctx.db.messages().insert(Message {
         sender: ctx.sender,
         text,
         sent: ctx.timestamp,

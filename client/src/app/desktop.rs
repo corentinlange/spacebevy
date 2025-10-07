@@ -1,7 +1,7 @@
 use bevy::prelude::*;
 
-use crate::net::NetworkPlugin;
 use super::common::base_app;
+use crate::net::NetworkPlugin;
 
 pub fn run() {
     let mut app = base_app();

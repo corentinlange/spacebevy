@@ -8,11 +8,11 @@ use spacetimedb_sdk::__codegen::{self as __sdk, __lib, __sats, __ws};
 
 pub mod client_connected_reducer;
 pub mod identity_disconnected_reducer;
-pub mod message_table;
 pub mod message_type;
+pub mod messages_table;
 pub mod send_message_reducer;
-pub mod user_table;
 pub mod user_type;
+pub mod users_table;
 
 pub use client_connected_reducer::{
     client_connected, set_flags_for_client_connected, ClientConnectedCallbackId,
@@ -20,11 +20,11 @@ pub use client_connected_reducer::{
 pub use identity_disconnected_reducer::{
     identity_disconnected, set_flags_for_identity_disconnected, IdentityDisconnectedCallbackId,
 };
-pub use message_table::*;
 pub use message_type::Message;
+pub use messages_table::*;
 pub use send_message_reducer::{send_message, set_flags_for_send_message, SendMessageCallbackId};
-pub use user_table::*;
 pub use user_type::User;
+pub use users_table::*;
 
 #[derive(Clone, PartialEq, Debug)]
 
@@ -85,8 +85,8 @@ impl TryFrom<__ws::ReducerCallInfo<__ws::BsatnFormat>> for Reducer {
 #[allow(non_snake_case)]
 #[doc(hidden)]
 pub struct DbUpdate {
-    message: __sdk::TableUpdate<Message>,
-    user: __sdk::TableUpdate<User>,
+    messages: __sdk::TableUpdate<Message>,
+    users: __sdk::TableUpdate<User>,
 }
 
 impl TryFrom<__ws::DatabaseUpdate<__ws::BsatnFormat>> for DbUpdate {
@@ -95,12 +95,12 @@ impl TryFrom<__ws::DatabaseUpdate<__ws::BsatnFormat>> for DbUpdate {
         let mut db_update = DbUpdate::default();
         for table_update in raw.tables {
             match &table_update.table_name[..] {
-                "message" => db_update
-                    .message
-                    .append(message_table::parse_table_update(table_update)?),
-                "user" => db_update
-                    .user
-                    .append(user_table::parse_table_update(table_update)?),
+                "messages" => db_update
+                    .messages
+                    .append(messages_table::parse_table_update(table_update)?),
+                "users" => db_update
+                    .users
+                    .append(users_table::parse_table_update(table_update)?),
 
                 unknown => {
                     return Err(__sdk::InternalError::unknown_name(
@@ -127,9 +127,9 @@ impl __sdk::DbUpdate for DbUpdate {
     ) -> AppliedDiff<'_> {
         let mut diff = AppliedDiff::default();
 
-        diff.message = cache.apply_diff_to_table::<Message>("message", &self.message);
-        diff.user = cache
-            .apply_diff_to_table::<User>("user", &self.user)
+        diff.messages = cache.apply_diff_to_table::<Message>("messages", &self.messages);
+        diff.users = cache
+            .apply_diff_to_table::<User>("users", &self.users)
             .with_updates_by_pk(|row| &row.identity);
 
         diff
@@ -140,8 +140,8 @@ impl __sdk::DbUpdate for DbUpdate {
 #[allow(non_snake_case)]
 #[doc(hidden)]
 pub struct AppliedDiff<'r> {
-    message: __sdk::TableAppliedDiff<'r, Message>,
-    user: __sdk::TableAppliedDiff<'r, User>,
+    messages: __sdk::TableAppliedDiff<'r, Message>,
+    users: __sdk::TableAppliedDiff<'r, User>,
 }
 
 impl __sdk::InModule for AppliedDiff<'_> {
@@ -154,8 +154,8 @@ impl<'r> __sdk::AppliedDiff<'r> for AppliedDiff<'r> {
         event: &EventContext,
         callbacks: &mut __sdk::DbCallbacks<RemoteModule>,
     ) {
-        callbacks.invoke_table_row_callbacks::<Message>("message", &self.message, event);
-        callbacks.invoke_table_row_callbacks::<User>("user", &self.user, event);
+        callbacks.invoke_table_row_callbacks::<Message>("messages", &self.messages, event);
+        callbacks.invoke_table_row_callbacks::<User>("users", &self.users, event);
     }
 }
 
@@ -746,7 +746,7 @@ impl __sdk::SpacetimeModule for RemoteModule {
     type SubscriptionHandle = SubscriptionHandle;
 
     fn register_tables(client_cache: &mut __sdk::ClientCache<Self>) {
-        message_table::register_table(client_cache);
-        user_table::register_table(client_cache);
+        messages_table::register_table(client_cache);
+        users_table::register_table(client_cache);
     }
 }
